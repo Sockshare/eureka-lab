@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eureka Lab — 16 Unique Real-Math Physics &amp; Science Simulation Laboratories</title>
+  <link rel="stylesheet" href="/static/css/styles.css" />
+</head>
+<body>
+  <!-- Top Observatory Bar -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-logo" aria-hidden="true">⚡</div>
+      <div>
+        <div class="brand-title-row">
+          <h1 class="brand-title">Eureka Lab</h1>
+          <span class="brand-badge">60 FPS HiDPI Real-Math Sandbox</span>
+          <span id="one-to-one-indicator" class="mapping-badge">16 Unique Simulations • 1-to-1 Concept Mapping</span>
+        </div>
+        <p class="brand-subtitle">Astrophysics, Fluid &amp; Aero, Quantum &amp; Optics, Electromagnetism, Chaos &amp; Complex Systems</p>
+      </div>
+    </div>
+
+    <!-- Custom "How does X work?" Question Mapper Omnibar -->
+    <form id="ask-form" class="ask-omnibar" autocomplete="off">
+      <span class="ask-icon" aria-hidden="true">🔭</span>
+      <input
+        id="question-input"
+        type="text"
+        placeholder="Ask anything: &quot;How does a prism split light?&quot; or &quot;How can an electron tunnel through a barrier?&quot;..."
+        aria-label="Ask any science or engineering question"
+      />
+      <button id="ask-btn" type="submit" class="btn-primary">Explain &amp; Simulate</button>
+    </form>
+
+    <div class="topbar-stats">
+      <div class="stat-pill" title="Earned Discovery XP">
+        <span class="stat-icon">✨</span>
+        <span id="xp-value">150</span>
+        <span class="stat-label">XP</span>
+      </div>
+      <div class="stat-pill stat-pill-quests" title="What-If Challenge Quests Completed">
+        <span class="stat-icon">🏆</span>
+        <span id="quests-solved-count">0 / 16</span>
+        <span class="stat-label">Quests</span>
+      </div>
+      <button id="save-snapshot-btn" type="button" class="btn-secondary" title="Save current lab configuration snapshot">
+        📸 Save Snapshot
+      </button>
+    </div>
+  </header>
+
+  <!-- Featured Instant Wonder Questions Ribbon -->
+  <section class="wonder-ribbon" aria-label="Featured Wonder Questions">
+    <span class="wonder-label">💡 Instant Wonder Questions:</span>
+    <div id="featured-questions-bar" class="wonder-chips"></div>
+  </section>
+
+  <!-- Concept Selector Toolbar: Category Filters + Search + 1-to-1 Engine Verification -->
+  <section class="concept-selector-bar" aria-label="Concept Filter and Search">
+    <div class="concept-selector-left">
+      <span class="selector-title">🔬 16 Scientific Concepts:</span>
+      <div id="category-filter-pills" class="category-filters" role="tablist" aria-label="Filter concepts by discipline"></div>
+    </div>
+    <div class="concept-selector-right">
+      <input
+        id="concept-search-input"
+        type="search"
+        class="concept-search"
+        placeholder="Filter 16 concepts (e.g. prism, quantum, black hole, truss)..."
+        aria-label="Filter 16 concepts by keyword"
+      />
+      <span class="engine-guarantee-pill" title="Every concept has its own dedicated physics engine">
+        ✓ 16 Engines · Zero Duplicates
+      </span>
+    </div>
+  </section>
+
+  <!-- 16 Interactive Laboratories Navigation Dock -->
+  <nav id="lab-tabs" class="lab-dock" aria-label="16 Unique Interactive Laboratories"></nav>
+
+  <!-- Active Custom Question Banner (shown when user asks a custom question) -->
+  <section id="custom-question-banner" class="question-banner hidden" aria-live="polite">
+    <div class="question-banner-main">
+      <span class="question-badge">🎯 Custom Question Mapped</span>
+      <strong id="mapped-question-text"></strong>
+      <span class="question-arrow">→</span>
+      <span id="mapped-scenario-pill" class="scenario-pill"></span>
+    </div>
+    <button id="dismiss-question-banner" type="button" class="btn-ghost-sm">Dismiss</button>
+  </section>
+
+  <!-- Main Observatory Workspace -->
+  <main class="workspace">
+    <!-- Left Column: Real-Time Canvas & Live Formula Readout -->
+    <section class="canvas-column" aria-label="Interactive Simulation Canvas">
+      <div class="canvas-card">
+        <div class="canvas-header">
+          <div class="canvas-title-group">
+            <div class="canvas-meta-row">
+              <span id="active-lab-category" class="category-pill">Astrophysics</span>
+              <span id="active-engine-badge" class="engine-id-badge">Engine: OrbitalMechanicsEngine (1-to-1)</span>
+            </div>
+            <h2 id="active-lab-title" class="canvas-title">N-Body Gravitational Dynamics &amp; Slingshot</h2>
+            <p id="active-lab-tagline" class="canvas-tagline"></p>
+          </div>
+          <div class="canvas-controls">
+            <button id="play-pause-btn" type="button" class="btn-control" data-running="true">⏸ Pause</button>
+            <button id="reset-sim-btn" type="button" class="btn-control">↺ Reset</button>
+            <button id="special-action-btn" type="button" class="btn-control hidden">🔊 Toggle Audio</button>
+          </div>
+        </div>
+
+        <!-- HTML5 Canvas Stage -->
+        <div class="canvas-stage-wrapper">
+          <canvas id="sim-canvas" width="880" height="480"></canvas>
+          <div class="canvas-overlay-top">
+            <span id="canvas-fps-badge" class="hud-badge">60 FPS · HiDPI Dedicated Solver</span>
+            <span id="canvas-interaction-hint" class="hud-hint">Click &amp; drag on canvas to interact</span>
+          </div>
+        </div>
+
+        <!-- 5 Live Telemetry Readouts -->
+        <div id="metrics-strip" class="metrics-strip" aria-live="polite"></div>
+
+        <!-- Live Substituted Formula Readout -->
+        <div class="formula-bar">
+          <div class="formula-bar-header">
+            <span class="formula-tag">📐 LIVE FORMULA READOUT</span>
+            <strong id="formula-name" class="formula-title">Vis-Viva &amp; Specific Orbital Energy Equation</strong>
+            <code id="formula-symbolic" class="formula-symbolic">v² = G·M·(2/r₀ − 1/a)</code>
+          </div>
+          <div id="formula-live-substitution" class="formula-substitution">
+            Loading live equation substitution...
+          </div>
+        </div>
+      </div>
+
+      <!-- 3-Tier Adaptive Explanation Engine Card -->
+      <section class="explanation-card" aria-label="3-Tier Adaptive Explanation Engine">
+        <div class="explanation-header">
+          <div>
+            <span class="section-eyebrow">ADAPTIVE EXPLANATION ENGINE</span>
+            <h3 class="explanation-main-title">Choose Your Explanation Depth</h3>
+          </div>
+          <div id="tier-tabs" class="tier-tabs" role="tablist">
+            <button type="button" class="tier-tab" data-tier="eli7" role="tab" aria-selected="false">
+              🧒 Explain to a 7-Year-Old
+            </button>
+            <button type="button" class="tier-tab active" data-tier="high_school" role="tab" aria-selected="true">
+              🎓 High School Honors
+            </button>
+            <button type="button" class="tier-tab" data-tier="engineer" role="tab" aria-selected="false">
+              🔬 Engineer &amp; Equations
+            </button>
+          </div>
+        </div>
+
+        <div class="explanation-content">
+          <h4 id="tier-headline" class="tier-headline"></h4>
+          <div id="tier-body" class="tier-body"></div>
+          <div class="try-this-box">
+            <span class="try-this-badge">🧪 Hands-On Canvas Experiment</span>
+            <p id="tier-try-this"></p>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- Right Column: What-If Challenge Quest, Scenario Presets & Live Sliders -->
+    <aside class="controls-column" aria-label="Simulation Controls and Quests">
+      <!-- What-If Challenge Quest Card -->
+      <section id="quest-card" class="quest-card">
+        <div class="quest-header">
+          <span class="quest-eyebrow">🎯 WHAT-IF CHALLENGE QUEST</span>
+          <span id="quest-status-badge" class="quest-badge">In Progress</span>
+        </div>
+        <h3 id="quest-title" class="quest-title">Circular Orbit Master</h3>
+        <p id="quest-prompt" class="quest-prompt"></p>
+        <div class="quest-progress-track" aria-label="Quest completion progress">
+          <div id="quest-progress-fill" class="quest-progress-fill" style="width: 35%"></div>
+        </div>
+        <div class="quest-footer">
+          <span id="quest-hint" class="quest-hint"></span>
+          <button id="quest-solve-btn" type="button" class="btn-quest-tune" title="Configure parameters to demonstrate the quest solution">
+            ⚡ Tune to Solve
+          </button>
+        </div>
+      </section>
+
+      <!-- Curated Scenario Presets -->
+      <section class="control-panel-card">
+        <div class="panel-header-row">
+          <h3 class="panel-title">🎛️ Curated Lab Presets</h3>
+          <span class="panel-subtitle">1-click physical regimes</span>
+        </div>
+        <div id="preset-buttons" class="presets-grid"></div>
+      </section>
+
+      <!-- Live Mathematical Parameter Sliders -->
+      <section class="control-panel-card">
+        <div class="panel-header-row">
+          <h3 class="panel-title">🎚️ Real-Time Parameters</h3>
+          <button id="restore-defaults-btn" type="button" class="btn-ghost-sm">Reset Sliders</button>
+        </div>
+        <div id="parameter-sliders" class="sliders-list"></div>
+      </section>
+
+      <!-- Saved Experiment Snapshots -->
+      <section class="control-panel-card">
+        <div class="panel-header-row">
+          <h3 class="panel-title">📓 Saved Lab Snapshots</h3>
+          <span id="snapshots-count" class="panel-subtitle">0 saved</span>
+        </div>
+        <div id="snapshots-list" class="snapshots-list">
+          <p class="empty-note">Click "📸 Save Snapshot" to bookmark any interesting parameter configuration.</p>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <script src="/static/js/simulations.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
